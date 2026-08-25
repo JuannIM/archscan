@@ -113,7 +113,7 @@ Architecture Health Score: 62/100 (Degraded)
 
 ## 📊 Free vs Pro
 
-| Feature | Free | Pro ($9/mo · $79/yr) |
+| Feature | Free | Pro ($9/mo or $79/yr) |
 | :--- | :---: | :---: |
 | File limit per scan | 200 files | **Unlimited** |
 | Silent error / secret detection | ✅ | ✅ |
@@ -125,6 +125,10 @@ Architecture Health Score: 62/100 (Degraded)
 | **JSON & Markdown output** | ❌ | ✅ |
 | **CI/CD integration** | exit code only | ✅ full output |
 | Support | GitHub Issues | Priority email |
+
+**Ready to upgrade?** 
+- [Get Pro Monthly ($9/mo)](https://polar.sh/checkout/polar_c_I4jgCz1sLRn8Z7jcZusWCIsESOMdyaNjjuFQO4IMu36)
+- [Get Pro Yearly ($79/yr)](https://polar.sh/checkout/polar_c_sevXnHuffzL9PkW4qoUGcJ7v9Wy75BzQBJxki2wcMLi)
 
 ---
 
