@@ -1,0 +1,5 @@
+archscan
+dist/
+*.exe
+.env
+.DS_Store
