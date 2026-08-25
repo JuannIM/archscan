@@ -42,7 +42,7 @@ checksum:
 
 release:
   github:
-    owner: archscan
+    owner: JuannIM
     name: archscan
   name_template: "{{.ProjectName}} v{{.Version}}"
   draft: false
