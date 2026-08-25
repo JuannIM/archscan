@@ -152,7 +152,7 @@ func extractPythonFunctions(lines []string) ([]funcBlock, error) {
 	inFunc := false
 	start := 0
 	var body []string
-	var baseIndent string
+	var defIndent string
 
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
@@ -163,26 +163,13 @@ func extractPythonFunctions(lines []string) ([]funcBlock, error) {
 			continue
 		}
 
-		if !inFunc && strings.HasPrefix(trimmed, "def ") {
-			inFunc = true
-			start = i + 1
-			body = []string{normalizeLine(trimmed)}
-			// Detect base indentation of next non-empty line
-			baseIndent = ""
-			for j := i + 1; j < len(lines); j++ {
-				if strings.TrimSpace(lines[j]) != "" {
-					baseIndent = leadingWhitespace(lines[j])
-					break
-				}
-			}
-			continue
-		}
+		indent := leadingWhitespace(line)
 
+		// Check if the current function should end
 		if inFunc {
-			indent := leadingWhitespace(line)
-			// Function ends when we see a non-empty line at or before base indent
-			// that is NOT a continuation
-			if baseIndent != "" && len(indent) < len(baseIndent) && trimmed != "" && !strings.HasPrefix(trimmed, "#") {
+			// A function ends if we encounter a non-comment line with <= indentation than the 'def' line.
+			// We ignore closing brackets/parens which sometimes align with the 'def' line.
+			if len(indent) <= len(defIndent) && !strings.HasPrefix(trimmed, "#") && !strings.HasPrefix(trimmed, ")") && !strings.HasPrefix(trimmed, "]") && !strings.HasPrefix(trimmed, "}") && !strings.HasPrefix(trimmed, "@") {
 				if len(body) >= 8 {
 					blocks = append(blocks, funcBlock{
 						normalized: strings.Join(body, "\n"),
@@ -193,26 +180,24 @@ func extractPythonFunctions(lines []string) ([]funcBlock, error) {
 				}
 				inFunc = false
 				body = nil
-				// Check if this new line starts a function
-				if strings.HasPrefix(trimmed, "def ") {
-					inFunc = true
-					start = i + 1
-					body = []string{normalizeLine(trimmed)}
-					baseIndent = ""
-					for j := i + 1; j < len(lines); j++ {
-						if strings.TrimSpace(lines[j]) != "" {
-							baseIndent = leadingWhitespace(lines[j])
-							break
-						}
-					}
-				}
-				continue
 			}
+		}
+
+		// Detect a new function
+		if !inFunc && strings.HasPrefix(trimmed, "def ") {
+			inFunc = true
+			start = i + 1
+			body = []string{normalizeLine(trimmed)}
+			defIndent = indent
+			continue
+		}
+
+		if inFunc {
 			body = append(body, normalizeLine(trimmed))
 		}
 	}
 
-	// Flush last function
+	// Catch the last function if the file ends
 	if inFunc && len(body) >= 8 {
 		blocks = append(blocks, funcBlock{
 			normalized: strings.Join(body, "\n"),
