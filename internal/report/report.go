@@ -52,11 +52,6 @@ func (r *Report) renderText(w io.Writer) error {
 		result.TotalFiles, len(result.Violations))
 	fmt.Fprintf(w, "└─────────────────────────────────────────────────────┘\n\n")
 
-	if result.Truncated {
-		yellow.Fprintf(w, "  ⚠  Free tier: scan limited to %d files.\n", result.TotalFiles)
-		dim.Fprintf(w, "     Upgrade to Pro for unlimited scanning → https://polar.sh/archscan\n\n")
-	}
-
 	if len(result.Violations) == 0 {
 		green.Fprintln(w, "  ✓ No architectural drift detected. Clean codebase!")
 		return nil

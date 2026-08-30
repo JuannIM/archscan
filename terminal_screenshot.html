@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: transparent;
+            display: inline-block;
+        }
+        .window {
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            width: 800px;
+            overflow: hidden;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        .titlebar {
+            background: #2d2d2d;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        
+        .content {
+            padding: 24px;
+            color: #d4d4d4;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .cmd { color: #4af626; font-weight: bold; }
+        .comment { color: #6a9955; }
+        .header { color: #569cd6; font-weight: bold; }
+        .red { color: #f44747; font-weight: bold; }
+        .gray { color: #808080; }
+        .yellow { color: #d7ba7d; }
+        .cyan { color: #4dc9b0; }
+        .box {
+            border: 1px solid #404040;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <div class="titlebar">
+            <div class="dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+        </div>
+        <div class="content">
+            <div><span class="cmd">$</span> archscan /home/juancito/picoclaw</div>
+            <br>
+            <div><span class="cyan">⚡ archscan — Architectural Drift Detector</span></div>
+            <div class="gray">   Scanning: /home/juancito/picoclaw</div>
+            <div class="gray">   License:  Pro (juancito@test.com)</div>
+            
+            <div class="box">
+                <span class="header">Scan Results — Go</span><br>
+                Files scanned: 835 &nbsp;&nbsp;&nbsp;&nbsp;Violations: <span class="red">301</span>
+            </div>
+
+            <div class="red">🔴 CRITICAL (145)</div>
+            <div class="gray">──────────────────────────────────────────────────────</div>
+            <br>
+            <div>  <span class="red">1. Silent error suppression</span></div>
+            <div>     Category: <span class="yellow">AntiPattern</span></div>
+            <div class="comment">     Error is captured but silently ignored (assigned to `_` or empty catch). </div>
+            <div class="comment">     AI tools frequently generate this pattern to make code compile without addressing error handling.</div>
+            <div>     Files:</div>
+            <div class="gray">       → cmd/picoclaw/internal/auth/helpers.go:450</div>
+            <div>     Fix: Handle the error explicitly: log it, wrap it, or propagate it to the caller.</div>
+            <br>
+            <div>  <span class="red">2. Potential hardcoded credential or secret</span></div>
+            <div>     Category: <span class="yellow">AntiPattern</span></div>
+            <div>     Files:</div>
+            <div class="gray">       → internal/config/keys.go:12</div>
+            <br>
+            <div>  <span class="red">3. God function detected</span></div>
+            <div>     Category: <span class="yellow">AntiPattern</span></div>
+            <div class="comment">     Function body is too large (112 lines). LLMs lose context on massive functions.</div>
+            <div>     Files:</div>
+            <div class="gray">       → pkg/api/handlers.go:210</div>
+            <br>
+            <div class="gray">... (298 more violations hidden) ...</div>
+            <br>
+            <div><span class="cyan">📝 Generating AI context rules...</span></div>
+            <div>   <span class="cmd">✓</span> Generated: /home/juancito/picoclaw/.cursorrules</div>
+            <div>   <span class="cmd">✓</span> Generated: /home/juancito/picoclaw/CLAUDE.md</div>
+            <br>
+            <div class="cmd">✨ Scan complete!</div>
+        </div>
+    </div>
+</body>
+</html>

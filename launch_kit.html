@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archscan Launch Kit</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.5;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .card-header img {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+        h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #374151;
+        }
+        .field {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+        .input-group {
+            position: relative;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #f9fafb;
+            color: #374151;
+        }
+        textarea {
+            height: 280px;
+            resize: vertical;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            ring: 2px;
+        }
+        .copy-btn {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #2563eb;
+        }
+        .copy-btn.success {
+            background: #10b981;
+        }
+        .twitter-thread textarea {
+            height: 120px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Archscan Launch Kit</h1>
+    <div class="subtitle">Click "Copy" and paste directly into each platform.</div>
+
+    <!-- Hacker News -->
+    <div class="card">
+        <div class="card-header">
+            <h2>🟧 Hacker News (Show HN)</h2>
+        </div>
+        
+        <div class="field">
+            <label>Title</label>
+            <div class="input-group">
+                <input type="text" id="hn-title" value="Show HN: Archscan – A Go CLI to stop AI coding tools from rotting your architecture" readonly>
+                <button class="copy-btn" onclick="copyText('hn-title', this)">Copy</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Body (Text)</label>
+            <div class="input-group">
+                <textarea id="hn-body" readonly>Hey HN, 
+
+Like many here, I’ve been using Cursor and Copilot heavily. While they write code fast, I noticed a recurring issue: they completely lack holistic context. They tend to duplicate utilities, break strict layer boundaries (e.g., UI talking directly to the DB), and reinvent the wheel instead of reusing existing project abstractions. 
+
+I built `archscan`, a CLI written in Go, to solve this. It uses fast AST parsing to detect architectural drift and dependency violations caused by AI tools. More importantly, it automatically generates `.cursorrules` and `CLAUDE.md` context files based on your actual codebase structure. This forces the LLMs to respect your architecture moving forward by feeding them the exact constraints they need before generating code.
+
+Since it's in Go, the parsing is practically instant even on large monorepos.
+
+Would love for you to try it out, critique the approach, or tear apart the implementation. 
+
+Repo: https://github.com/JuannIM/archscan</textarea>
+                <button class="copy-btn" onclick="copyText('hn-body', this)">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reddit -->
+    <div class="card">
+        <div class="card-header">
+            <h2>🤖 Reddit (r/programming & r/golang)</h2>
+        </div>
+        
+        <div class="field">
+            <label>Title</label>
+            <div class="input-group">
+                <input type="text" id="reddit-title" value="I analyzed 50 repos built with AI tools and found a disturbing pattern." readonly>
+                <button class="copy-btn" onclick="copyText('reddit-title', this)">Copy</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Body (Text)</label>
+            <div class="input-group">
+                <textarea id="reddit-body" readonly>Like many of us, I’ve been shipping significantly faster lately using Cursor and Copilot. But recently, I started auditing the actual architecture of these "AI-assisted" codebases, and the results were alarming.
+
+Because LLMs lack holistic context, they heavily optimize for the local file they are editing. Across the board, I found massive code duplication, broken domain boundaries, and a complete disregard for existing project abstractions. If a utility function wasn't in their immediate context window, they just hallucinated a new one.
+
+To solve this, I wrote `archscan` in Go. It’s a CLI that parses your codebase's AST, flags these architectural drifts, and auto-generates `.cursorrules` and `CLAUDE.md` files. This essentially feeds the LLM the exact architectural boundaries it needs to follow moving forward, stopping the spaghetti code before it gets written.
+
+I chose Go because the AST parsing is incredibly fast, and distributing it as a single binary makes it trivial to drop into CI pipelines. 
+
+If you're dealing with AI-generated tech debt, I'd love for you to test it out and let me know what you think!
+
+Repo: https://github.com/JuannIM/archscan</textarea>
+                <button class="copy-btn" onclick="copyText('reddit-body', this)">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Twitter -->
+    <div class="card">
+        <div class="card-header">
+            <h2>🐦 Twitter / X (Thread)</h2>
+        </div>
+        
+        <div class="field twitter-thread">
+            <label>Tweet 1</label>
+            <div class="input-group">
+                <textarea id="tw-1" readonly>Shipping 10x faster with AI also means accumulating tech debt 10x faster. 
+
+Cursor and Copilot are great at writing local code, but terrible at respecting your overall architecture. 
+
+Meet Archscan: a Go CLI that detects AI-caused architectural drift. 🧵👇</textarea>
+                <button class="copy-btn" onclick="copyText('tw-1', this)">Copy</button>
+            </div>
+        </div>
+
+        <div class="field twitter-thread">
+            <label>Tweet 2</label>
+            <div class="input-group">
+                <textarea id="tw-2" readonly>Because LLMs lack holistic context, they duplicate existing utilities and break strict domain boundaries. 
+
+Archscan statically analyzes your codebase to find these violations instantly.</textarea>
+                <button class="copy-btn" onclick="copyText('tw-2', this)">Copy</button>
+            </div>
+        </div>
+
+        <div class="field twitter-thread">
+            <label>Tweet 3</label>
+            <div class="input-group">
+                <textarea id="tw-3" readonly>The best part? It automatically generates `.cursorrules` and `CLAUDE.md` files based on your exact project structure. 
+
+This sets strict guardrails, forcing AI tools to respect your architecture in the future.
+
+Check it out here: https://github.com/JuannIM/archscan</textarea>
+                <button class="copy-btn" onclick="copyText('tw-3', this)">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyText(elementId, btnElement) {
+            const el = document.getElementById(elementId);
+            el.select();
+            el.setSelectionRange(0, 99999); // For mobile devices
+            
+            navigator.clipboard.writeText(el.value).then(() => {
+                const originalText = btnElement.innerText;
+                btnElement.innerText = "Copied! ✓";
+                btnElement.classList.add("success");
+                
+                setTimeout(() => {
+                    btnElement.innerText = originalText;
+                    btnElement.classList.remove("success");
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

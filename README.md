@@ -4,12 +4,11 @@
 
 **Architectural drift detection and AI guardrail generation for AI-assisted codebases.**
 
-[![Release](https://img.shields.io/github/v/release/archscan/archscan?style=flat-square&color=00D1B2)](https://github.com/archscan/archscan/releases)
+[![Release](https://img.shields.io/github/v/release/JuannIM/archscan?style=flat-square&color=00D1B2)](https://github.com/JuannIM/archscan/releases)
 [![Go Version](https://img.shields.io/badge/go-1.22+-00ADD8?style=flat-square&logo=go)](https://go.dev)
-[![License](https://img.shields.io/badge/license-MIT%20%2F%20Commercial-blue?style=flat-square)](LICENSE)
-[![Polar](https://img.shields.io/badge/Polar.sh-Get%20Pro-FF4500?style=flat-square)](https://polar.sh/archscan)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[Features](#features) • [Installation](#installation) • [Quickstart](#quickstart) • [Free vs Pro](#free-vs-pro) • [CI/CD](#cicd-integration) • [Activate Pro](#activating-pro-license)
+[Features](#features) • [Installation](#installation) • [Quickstart](#quickstart) • [CI/CD](#cicd-integration) • [Support the Project](#support-the-project)
 
 </div>
 
@@ -36,10 +35,11 @@ Over weeks of AI-accelerated development, codebases suffer from silent decay:
 
 - **Blazing fast** — pure Go, no runtime deps, `< 6s` on large repos
 - **Multi-language** — Go, Python, Java, TypeScript/JavaScript
-- **Layer boundary enforcement** *(Pro)* — custom architectural rules
-- **AI guardrail generation** *(Pro)* — auto-generates `.cursorrules` and `CLAUDE.md`
+- **Layer boundary enforcement** — custom architectural rules
+- **AI guardrail generation** — auto-generates `.cursorrules` and `CLAUDE.md`
 - **Anti-pattern detection** — duplicates, silent errors, god functions, hardcoded secrets
 - **CI/CD ready** — JSON & Markdown output, non-zero exit on violations
+- **100% Free & Open Source** — no limits, no paywalls.
 
 ---
 
@@ -47,10 +47,10 @@ Over weeks of AI-accelerated development, codebases suffer from silent decay:
 
 ```bash
 # macOS / Linux (one-liner)
-curl -fsSL https://raw.githubusercontent.com/archscan/archscan/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/JuannIM/archscan/main/install.sh | sh
 
 # Go install
-go install github.com/archscan/archscan@latest
+go install github.com/JuannIM/archscan@latest
 
 # Or download binary from GitHub Releases
 ```
@@ -63,13 +63,13 @@ go install github.com/archscan/archscan@latest
 # Basic scan
 archscan /path/to/repo
 
-# Generate AI rule files (.cursorrules + CLAUDE.md)  — Pro
+# Generate AI rule files (.cursorrules + CLAUDE.md)
 archscan /path/to/repo --rules
 
-# Markdown output for CI/PR comments  — Pro
+# Markdown output for CI/PR comments
 archscan /path/to/repo --format markdown
 
-# JSON for automated pipelines  — Pro
+# JSON for automated pipelines
 archscan /path/to/repo --format json
 ```
 
@@ -101,56 +101,12 @@ archscan /path/to/repo --format json
      Fix: Use environment variables or a secrets manager.
 
   3. Layer violation: presentation → infrastructure
-     Category: BoundaryViolation  [PRO]
+     Category: BoundaryViolation
      Files:
        → pkg/api/handler.go:12
      Fix: Route through the application/service layer.
 
 Architecture Health Score: 62/100 (Degraded)
-```
-
----
-
-## 📊 Free vs Pro
-
-| Feature | Free | Pro ($9/mo or $79/yr) |
-| :--- | :---: | :---: |
-| File limit per scan | 200 files | **Unlimited** |
-| Silent error / secret detection | ✅ | ✅ |
-| God function detection | ✅ | ✅ |
-| Naming inconsistency checks | ✅ | ✅ |
-| **Layer boundary violation detection** | ❌ | ✅ |
-| **Generate `.cursorrules`** | ❌ | ✅ |
-| **Generate `CLAUDE.md`** | ❌ | ✅ |
-| **JSON & Markdown output** | ❌ | ✅ |
-| **CI/CD integration** | exit code only | ✅ full output |
-| Support | GitHub Issues | Priority email |
-
-**Ready to upgrade?** 
-- [Get Pro Monthly ($9/mo)](https://polar.sh/checkout/polar_c_I4jgCz1sLRn8Z7jcZusWCIsESOMdyaNjjuFQO4IMu36)
-- [Get Pro Yearly ($79/yr)](https://polar.sh/checkout/polar_c_sevXnHuffzL9PkW4qoUGcJ7v9Wy75BzQBJxki2wcMLi)
-
----
-
-## 🔑 Activating Pro License
-
-After purchasing at [polar.sh/archscan](https://polar.sh/archscan), activate with:
-
-```bash
-archscan activate --email you@example.com --key ARCHSCAN-XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX
-```
-
-Check status anytime:
-
-```bash
-archscan license
-```
-
-For CI/CD, set the `ARCHSCAN_LICENSE_KEY` environment variable:
-
-```yaml
-env:
-  ARCHSCAN_LICENSE_KEY: ${{ secrets.ARCHSCAN_LICENSE_KEY }}
 ```
 
 ---
@@ -171,20 +127,26 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install archscan
-        run: curl -fsSL https://raw.githubusercontent.com/archscan/archscan/main/install.sh | sh
+        run: curl -fsSL https://raw.githubusercontent.com/JuannIM/archscan/main/install.sh | sh
 
       - name: Run scan
-        env:
-          ARCHSCAN_LICENSE_KEY: ${{ secrets.ARCHSCAN_LICENSE_KEY }}
         run: archscan . --format markdown --rules
 ```
 
 ---
 
-## 🤝 Community & Support
+## ☕ Support the Project
 
-- **Get Pro:** [polar.sh/archscan](https://polar.sh/archscan)
-- **Issues:** [GitHub Issues](https://github.com/archscan/archscan/issues)
+`archscan` is 100% free and open source. If it saved you or your team hours of untangling AI-generated spaghetti code, consider supporting the development!
+
+- **GitHub Sponsors:** [github.com/sponsors/JuannIM](https://github.com/sponsors/JuannIM)
+- **Buy me a coffee:** [buymeacoffee.com/JuannIM](https://buymeacoffee.com/JuannIM)
+
+---
+
+## 🤝 Community
+
+- **Issues:** [GitHub Issues](https://github.com/JuannIM/archscan/issues)
 - **Email:** archscan@proton.me
 
 ---

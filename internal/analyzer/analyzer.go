@@ -15,7 +15,6 @@ type Result struct {
 	RepoPath    string
 	Language    string
 	TotalFiles  int
-	Truncated   bool // true when free tier file limit was applied
 	Violations  []Violation
 	Suggestions []string
 	Modules     []Module
@@ -24,10 +23,10 @@ type Result struct {
 
 // Stats holds aggregate metrics.
 type Stats struct {
-	FilesScanned    int
-	DuplicateSets   int
+	FilesScanned     int
+	DuplicateSets    int
 	BrokenBoundaries int
-	AntiPatterns    int
+	AntiPatterns     int
 }
 
 // Module represents a logical code module/package.
@@ -61,11 +60,11 @@ const (
 type Category string
 
 const (
-	CatDuplication       Category = "Duplication"
-	CatBoundaryViolation Category = "BoundaryViolation"
-	CatAntiPattern       Category = "AntiPattern"
+	CatDuplication         Category = "Duplication"
+	CatBoundaryViolation   Category = "BoundaryViolation"
+	CatAntiPattern         Category = "AntiPattern"
 	CatNamingInconsistency Category = "NamingInconsistency"
-	CatDeadCode          Category = "DeadCode"
+	CatDeadCode            Category = "DeadCode"
 )
 
 // HasCritical returns true if any violation is critical severity.
@@ -79,7 +78,7 @@ func (r *Result) HasCritical() bool {
 }
 
 // Analyze runs the full architectural analysis on the given path.
-func Analyze(repoPath string, verbose bool, isPro bool, fileLimit int) (*Result, error) {
+func Analyze(repoPath string, verbose bool) (*Result, error) {
 	result := &Result{
 		RepoPath: repoPath,
 	}
@@ -101,32 +100,18 @@ func Analyze(repoPath string, verbose bool, isPro bool, fileLimit int) (*Result,
 		return nil, fmt.Errorf("file collection: %w", err)
 	}
 
-	// Apply free tier file limit
-	truncated := false
-	if !isPro && fileLimit > 0 && len(files) > fileLimit {
-		files = files[:fileLimit]
-		truncated = true
-	}
 	result.TotalFiles = len(files)
-	result.Truncated = truncated
 
 	if verbose {
-		fmt.Printf("   Source files found: %d", len(files))
-		if truncated {
-			fmt.Printf(" (limited to %d — upgrade to Pro for unlimited)", fileLimit)
-		}
-		fmt.Println()
+		fmt.Printf("   Source files found: %d\n", len(files))
 	}
 
-	// Build detector list based on license
+	// Build detector list (all enabled since it's 100% Free Open Source)
 	detectors := []Detector{
 		&DuplicationDetector{},
 		&AntiPatternDetector{},
 		&NamingDetector{},
-	}
-	if isPro {
-		// BoundaryDetector is a Pro-only feature
-		detectors = append(detectors, &BoundaryDetector{})
+		&BoundaryDetector{},
 	}
 
 	for _, d := range detectors {
