@@ -149,7 +149,7 @@ jobs:
 If you find this tool helpful, **please consider giving it a ⭐️ on GitHub!** It helps the project reach more developers.
 
 - **Bugs & Feature Requests:** Found an issue or have an idea? Please [open an issue on GitHub](https://github.com/JuannIM/archscan/issues).
-- **Email:** archscan@proton.me
+- **Email:** shanys.mora@gmail.com
 
 ---
 
