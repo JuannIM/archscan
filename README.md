@@ -38,6 +38,10 @@ Over weeks of AI-accelerated development, codebases suffer from silent decay:
 - **Layer boundary enforcement** — custom architectural rules
 - **AI guardrail generation** — auto-generates `.cursorrules` and `CLAUDE.md`
 - **Anti-pattern detection** — duplicates, silent errors, god functions, hardcoded secrets
+- **Dead code detection** — functions defined but never called anywhere in the repo
+- **Worst Offenders summary** — top 5 files by violation count so you know where to start
+- **Watch mode** — live re-scan on file save, perfect for active development
+- **Configurable via `archscan.yaml`** — per-project thresholds, exclusions, and rule toggles
 - **CI/CD ready** — JSON & Markdown output, non-zero exit on violations
 - **100% Free & Open Source** — no limits, no paywalls.
 
@@ -71,6 +75,31 @@ archscan /path/to/repo --format markdown
 
 # JSON for automated pipelines
 archscan /path/to/repo --format json
+
+# Watch mode — auto re-scan on every file save
+archscan watch /path/to/repo
+```
+
+### Configuring with `archscan.yaml`
+
+Drop an `archscan.yaml` file in the root of your repo to customize the scan:
+
+```yaml
+# archscan.yaml
+exclude:
+  - "**/migrations/**"
+  - "**/*_test.go"
+
+thresholds:
+  god_function_lines: 100     # default: 80
+  duplicate_min_lines: 10     # default: 8
+
+rules:
+  check_boundaries: true
+  check_naming: true
+  check_duplication: true
+  check_antipatterns: true
+  check_dead_code: true
 ```
 
 ### Sample output

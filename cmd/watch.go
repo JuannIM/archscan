@@ -42,7 +42,7 @@ scan whenever a source file is modified. Perfect for live feedback while coding.
 		dim := color.New(color.Faint)
 
 		cyan.Printf("\n👁  Watching %s for changes...\n", absPath)
-		dim.Println("   Press Ctrl+C to stop.\n")
+		dim.Println("   Press Ctrl+C to stop.")
 
 		// Run initial scan
 		runScan(absPath)
