@@ -5,13 +5,14 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"archscan/internal/config"
 )
 
 // NamingDetector finds inconsistent naming conventions across a codebase.
 // AI tools often mix conventions (camelCase vs snake_case, ALL_CAPS vs CamelCase, etc.)
 type NamingDetector struct{}
 
-func (d *NamingDetector) Detect(root string, files []string, lang string, verbose bool) ([]Violation, error) {
+func (d *NamingDetector) Detect(root string, files []string, lang string, verbose bool, cfg *config.ArchscanConfig) ([]Violation, error) {
 	if len(files) < 5 {
 		return nil, nil
 	}

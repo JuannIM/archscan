@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"archscan/internal/analyzer"
+	"archscan/internal/config"
 	"archscan/internal/report"
 	"archscan/internal/rules"
 
@@ -43,7 +44,8 @@ context rules to prevent future violations.`,
 		fmt.Printf("   Scanning: %s\n\n", repoPath)
 
 		// Run analysis (no limits)
-		result, err := analyzer.Analyze(repoPath, verbose)
+		cfg := config.Load(repoPath)
+	result, err := analyzer.Analyze(repoPath, verbose, cfg)
 		if err != nil {
 			return fmt.Errorf("analysis failed: %w", err)
 		}

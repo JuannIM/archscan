@@ -4,6 +4,7 @@ package report
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"io"
 	"strings"
 
@@ -113,6 +114,47 @@ func (r *Report) renderText(w io.Writer) error {
 		scoreLabel = "Fair"
 	}
 	scoreColor.Fprintf(w, "%d/100 (%s)\n\n", score, scoreLabel)
+
+	// Worst Offenders
+	offenders := make(map[string]int)
+	for _, v := range result.Violations {
+		for _, f := range v.Files {
+			// Strip line number if present
+			fileParts := strings.Split(f, ":")
+			cleanFile := fileParts[0]
+			if cleanFile == "..." { continue }
+			offenders[cleanFile]++
+		}
+	}
+
+	if len(offenders) >= 2 {
+		type fileCount struct {
+			file  string
+			count int
+		}
+		var counts []fileCount
+		for f, c := range offenders {
+			counts = append(counts, fileCount{file: f, count: c})
+		}
+		sort.Slice(counts, func(i, j int) bool {
+			if counts[i].count == counts[j].count {
+				return counts[i].file < counts[j].file
+			}
+			return counts[i].count > counts[j].count
+		})
+
+		bold.Fprintf(w, "📁 Worst Offenders (top files by violation count)\n")
+		fmt.Fprintln(w, strings.Repeat("─", 54))
+		limit := 5
+		if len(counts) < limit {
+			limit = len(counts)
+		}
+		for i := 0; i < limit; i++ {
+			c := counts[i]
+			fmt.Fprintf(w, "  %d. %-30s ──── %d violations\n", i+1, c.file, c.count)
+		}
+		fmt.Fprintf(w, "\n")
+	}
 
 	return nil
 }
