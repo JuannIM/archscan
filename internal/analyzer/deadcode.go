@@ -6,12 +6,17 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"archscan/internal/config"
 )
 
 // DeadCodeDetector finds functions that are defined but never referenced anywhere else.
 type DeadCodeDetector struct{}
 
-func (d *DeadCodeDetector) Detect(root string, files []string, lang string, verbose bool) ([]Violation, error) {
+func (d *DeadCodeDetector) Detect(root string, files []string, lang string, verbose bool, cfg *config.ArchscanConfig) ([]Violation, error) {
+	if cfg != nil && !cfg.Rules.CheckDeadCode {
+		return nil, nil
+	}
 	idFreq := make(map[string]int)
 
 	type funcDef struct {
