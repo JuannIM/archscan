@@ -23,6 +23,7 @@ type Rules struct {
 	CheckNaming       bool `yaml:"check_naming"`
 	CheckDuplication  bool `yaml:"check_duplication"`
 	CheckAntipatterns bool `yaml:"check_antipatterns"`
+	CheckDeadCode     bool `yaml:"check_dead_code"`
 }
 
 func DefaultConfig() *ArchscanConfig {
@@ -38,6 +39,7 @@ func DefaultConfig() *ArchscanConfig {
 			CheckNaming:       true,
 			CheckDuplication:  true,
 			CheckAntipatterns: true,
+			CheckDeadCode:     true,
 		},
 	}
 }
