@@ -1,6 +1,3 @@
-// Package analyzer provides the core architectural analysis engine.
-// It walks the repository, builds a file/module graph, and runs
-// all registered detectors to find drift violations.
 package analyzer
 
 import (
@@ -8,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"archscan/internal/config"
 )
 
-// Result holds the complete analysis output for a repository.
 type Result struct {
 	RepoPath    string
 	Language    string
@@ -20,24 +17,18 @@ type Result struct {
 	Modules     []Module
 	Stats       Stats
 }
-
-// Stats holds aggregate metrics.
 type Stats struct {
 	FilesScanned     int
 	DuplicateSets    int
 	BrokenBoundaries int
 	AntiPatterns     int
 }
-
-// Module represents a logical code module/package.
 type Module struct {
 	Name         string
 	Path         string
 	Imports      []string
 	ExportedSyms []string
 }
-
-// Violation represents a single architectural issue.
 type Violation struct {
 	Severity    Severity
 	Category    Category
@@ -46,19 +37,13 @@ type Violation struct {
 	Files       []string
 	Suggestion  string
 }
-
-// Severity of a violation.
 type Severity string
-
 const (
 	Critical Severity = "CRITICAL"
 	Warning  Severity = "WARNING"
 	Info     Severity = "INFO"
 )
-
-// Category of architectural issue.
 type Category string
-
 const (
 	CatDuplication         Category = "Duplication"
 	CatBoundaryViolation   Category = "BoundaryViolation"
@@ -66,8 +51,6 @@ const (
 	CatNamingInconsistency Category = "NamingInconsistency"
 	CatDeadCode            Category = "DeadCode"
 )
-
-// HasCritical returns true if any violation is critical severity.
 func (r *Result) HasCritical() bool {
 	for _, v := range r.Violations {
 		if v.Severity == Critical {
@@ -76,46 +59,34 @@ func (r *Result) HasCritical() bool {
 	}
 	return false
 }
-
-// Analyze runs the full architectural analysis on the given path.
-func Analyze(repoPath string, verbose bool) (*Result, error) {
+func Analyze(repoPath string, verbose bool, cfg *config.ArchscanConfig) (*Result, error) {
 	result := &Result{
 		RepoPath: repoPath,
 	}
-
-	// Detect primary language
 	lang, err := detectLanguage(repoPath)
 	if err != nil {
 		return nil, fmt.Errorf("language detection: %w", err)
 	}
 	result.Language = lang
-
 	if verbose {
 		fmt.Printf("   Detected language: %s\n", lang)
 	}
-
-	// Collect all source files
-	files, err := collectFiles(repoPath, lang)
+	files, err := collectFiles(repoPath, lang, cfg.Exclude)
 	if err != nil {
 		return nil, fmt.Errorf("file collection: %w", err)
 	}
-
 	result.TotalFiles = len(files)
-
 	if verbose {
 		fmt.Printf("   Source files found: %d\n", len(files))
 	}
-
-	// Build detector list (all enabled since it's 100% Free Open Source)
 	detectors := []Detector{
 		&DuplicationDetector{},
 		&AntiPatternDetector{},
 		&NamingDetector{},
 		&BoundaryDetector{},
 	}
-
 	for _, d := range detectors {
-		violations, err := d.Detect(repoPath, files, lang, verbose)
+		violations, err := d.Detect(repoPath, files, lang, verbose, cfg)
 		if err != nil {
 			if verbose {
 				fmt.Printf("   [warn] detector %T failed: %v\n", d, err)
@@ -124,14 +95,10 @@ func Analyze(repoPath string, verbose bool) (*Result, error) {
 		}
 		result.Violations = append(result.Violations, violations...)
 	}
-
 	result.Stats = buildStats(result.Violations)
 	result.Suggestions = buildSuggestions(result)
-
 	return result, nil
 }
-
-// detectLanguage identifies the primary programming language in the repo.
 func detectLanguage(root string) (string, error) {
 	counts := map[string]int{}
 	extensions := map[string]string{
@@ -142,7 +109,6 @@ func detectLanguage(root string) (string, error) {
 		".js":   "JavaScript",
 		".rs":   "Rust",
 	}
-
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
@@ -159,12 +125,9 @@ func detectLanguage(root string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	if len(counts) == 0 {
 		return "Unknown", nil
 	}
-
-	// Return the most common language
 	best, bestCount := "", 0
 	for lang, count := range counts {
 		if count > bestCount {
@@ -173,9 +136,7 @@ func detectLanguage(root string) (string, error) {
 	}
 	return best, nil
 }
-
-// collectFiles returns all source file paths for the detected language.
-func collectFiles(root, lang string) ([]string, error) {
+func collectFiles(root, lang string, exclude []string) ([]string, error) {
 	extMap := map[string][]string{
 		"Go":         {".go"},
 		"Python":     {".py"},
@@ -184,21 +145,23 @@ func collectFiles(root, lang string) ([]string, error) {
 		"JavaScript": {".js", ".jsx"},
 		"Rust":       {".rs"},
 	}
-
 	exts, ok := extMap[lang]
 	if !ok {
 		exts = []string{}
 	}
-
 	var files []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}
+		rel, _ := filepath.Rel(root, path)
 		if info.IsDir() {
-			if shouldSkipDir(info.Name()) {
+			if shouldSkipDir(info.Name()) || isExcluded(rel, exclude) {
 				return filepath.SkipDir
 			}
+			return nil
+		}
+		if isExcluded(rel, exclude) {
 			return nil
 		}
 		fileExt := strings.ToLower(filepath.Ext(path))
@@ -212,7 +175,6 @@ func collectFiles(root, lang string) ([]string, error) {
 	})
 	return files, err
 }
-
 func shouldSkipDir(name string) bool {
 	skip := map[string]bool{
 		".git": true, "node_modules": true, "vendor": true,
@@ -223,7 +185,6 @@ func shouldSkipDir(name string) bool {
 	}
 	return skip[name]
 }
-
 func buildStats(violations []Violation) Stats {
 	s := Stats{}
 	for _, v := range violations {
@@ -239,7 +200,6 @@ func buildStats(violations []Violation) Stats {
 	}
 	return s
 }
-
 func buildSuggestions(r *Result) []string {
 	var s []string
 	if r.Stats.DuplicateSets > 0 {
@@ -252,4 +212,33 @@ func buildSuggestions(r *Result) []string {
 		s = append(s, "Run `archscan --rules` to generate AI context files and prevent future pattern drift")
 	}
 	return s
+}
+
+func isExcluded(relPath string, exclude []string) bool {
+	slashPath := filepath.ToSlash(relPath)
+	for _, ex := range exclude {
+		if strings.HasPrefix(ex, "**/") && strings.HasSuffix(ex, "/**") {
+			match := strings.TrimSuffix(strings.TrimPrefix(ex, "**/"), "/**")
+			if strings.Contains(slashPath, "/"+match+"/") || strings.HasPrefix(slashPath, match+"/") {
+				return true
+			}
+		} else if strings.HasPrefix(ex, "**/") {
+			match := strings.TrimPrefix(ex, "**/")
+			matched, _ := filepath.Match(match, filepath.Base(slashPath))
+			if matched {
+				return true
+			}
+		} else if strings.HasSuffix(ex, "/") {
+			match := strings.TrimSuffix(ex, "/")
+			if strings.Contains(slashPath, "/"+match+"/") || strings.HasPrefix(slashPath, match+"/") || slashPath == match {
+				return true
+			}
+		} else {
+			matched, _ := filepath.Match(ex, filepath.Base(slashPath))
+			if matched {
+				return true
+			}
+		}
+	}
+	return false
 }

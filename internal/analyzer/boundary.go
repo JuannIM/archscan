@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"archscan/internal/config"
 )
 
 // BoundaryDetector finds violations of architectural layer boundaries.
@@ -35,7 +36,7 @@ var forbiddenCross = []struct {
 	{"application",  "infrastructure"},
 }
 
-func (d *BoundaryDetector) Detect(root string, files []string, lang string, verbose bool) ([]Violation, error) {
+func (d *BoundaryDetector) Detect(root string, files []string, lang string, verbose bool, cfg *config.ArchscanConfig) ([]Violation, error) {
 	var violations []Violation
 
 	for _, f := range files {

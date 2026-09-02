@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"archscan/internal/config"
 )
 
 // AntiPatternDetector finds known bad patterns that AI tools commonly introduce.
@@ -88,7 +89,7 @@ var knownAntiPatterns = []antiPattern{
 	},
 }
 
-func (d *AntiPatternDetector) Detect(root string, files []string, lang string, verbose bool) ([]Violation, error) {
+func (d *AntiPatternDetector) Detect(root string, files []string, lang string, verbose bool, cfg *config.ArchscanConfig) ([]Violation, error) {
 	var violations []Violation
 
 	for _, f := range files {

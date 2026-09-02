@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"archscan/internal/config"
 )
 
 // DuplicationDetector finds duplicate function-level blocks across files.
 // Uses function-level extraction (not sliding window) for O(n) performance.
 type DuplicationDetector struct{}
 
-func (d *DuplicationDetector) Detect(root string, files []string, lang string, verbose bool) ([]Violation, error) {
+func (d *DuplicationDetector) Detect(root string, files []string, lang string, verbose bool, cfg *config.ArchscanConfig) ([]Violation, error) {
 	// Map: normalized-function-hash -> list of (file:line, preview)
 	type occurrence struct {
 		location string
